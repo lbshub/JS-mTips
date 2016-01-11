@@ -4,15 +4,15 @@
 --------------------------------------
 
 ##两种调用方式
-1 Tips.alert('内容')
-2 Tips.alert({
+* Tips.alert('内容')
+* Tips.alert({
 	content: '内容'
 });
 
 ##三种弹出方法
-1 Tips.alert()
-2 Tips.confirm()
-3 Tips.open()
+* Tips.alert()
+* Tips.confirm()
+* Tips.open()
 
 ##特色的事件选项
 * before: 点击确定按钮 关闭弹出框前 执行函数  (Tips.alert Tips.confirm中有效)
