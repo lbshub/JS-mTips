@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+	<title>alert弹出框</title>
+	<style type="text/css">
+	 
+	*{margin: 0; padding: 0;}
+	button{margin-bottom: 15px;}
+	</style>
+	
+</head>
+<body>
+	
+<!-- 
+<div id="tips_wrap">
+	<table><tr><td>
+		<div id="tips_box">
+			<div id="tips_content"></div>
+			<div id="tips_foot"><a href="javascript:;" id="tips_cancel">取消</a><a href="javascript:;" id="tips_define">确定</a></div>
+		</div>	
+	</td></tr></table>
+</div>
+ -->
+
+<div style="height:300px; background: #00f;"></div>
+
+<button id="alertBtn_01">alert弹出一条消息</button>
+<button id="alertBtn_02">alert弹出一条的消息：带自定义html标签</button>
+<button id="alertBtn_03">alert弹出一条消息：自定义按钮文本</button>
+<button id="alertBtn_04">alert弹出一条消息：回调</button>
+
+<button id="alertBtn_05">confirm弹出: 余额不足</button>
+<button id="alertBtn_06">confirm弹出: 购买确认</button>
+<button id="alertBtn_07">confirm弹出: 领取红包</button>
+
+<button id="alertBtn_08">open弹出: 提示</button>
+<button id="alertBtn_09">open弹出: 倒计时关闭</button>
+
+<div style="height: 400px; background: #f00;"></div>
+
+
+<!-- 加载 aTips start -->
+<link rel="stylesheet" type="text/css" href="aTips.css" />
+<script type="text/javascript" src="aTips.min.js"></script>
+<!-- 加载 aTips end -->
+
+<script type="text/javascript">
+
+
+Tips.$('#alertBtn_01').onclick = function(){
+	Tips.alert('alert弹出一条消息');
+};
+Tips.$('#alertBtn_02').onclick = function(){
+	Tips.alert('<h2 style="font-size:16px;font-weight: bold;color:#f00;">alert弹出一条消息</h2>');
+};
+Tips.$('#alertBtn_03').onclick = function(){
+	Tips.alert({
+		content: 'alert弹出一条消息',
+		define: '知道了'
+	});
+};
+Tips.$('#alertBtn_04').onclick = function(){
+	Tips.alert({
+		content: 'alert弹出一条消息',
+		define: '知道了',
+		after: function(){
+			Tips.alert('弹出框关闭了');
+		}
+	});
+	// Tips.alert('alert弹出一条消息', function(){
+	// 	Tips.alert('弹出框关闭了');
+	// });
+};
+
+// ------------------------------------------------
+
+Tips.$('#alertBtn_05').onclick = function(){
+	// 调用方式1
+	Tips.confirm({
+		define: '去充值',
+		cancel: '知道了',
+		content: '<h3>账户余额不足</h3><p>您的账户余额不足进行本次购买，请充值后再来</p>',
+		after: function(b){
+			if(b){
+				Tips.alert('跳转到充值页面');
+				// location.href = '/recharge';
+			}
+		}
+	});
+};
+
+Tips.$('#alertBtn_06').onclick = function(e){
+	var price = 100; //单价
+	var quantity = 500; // 数量
+	var total = price * quantity; // 总额
+	Tips.confirm({
+		content: '<h3>确定要购买吗？</h3><p>您此次购买份数为<strong>'+ quantity +'</strong>份，每份价格<strong>'+ price +'</strong>元，总需<strong>'+ total +'</strong>元</p><div><input type="checkbox" checked="checked" id="isread" name="isread"><label for="isread">我已阅读并同意</label> <a href="http://m.jd.com/" class="a_jkxy">《购买协议》</a><p id="iserror"></p></div>',
+		define: '确定购买',
+		cancel: '不买了',
+		before: function(){
+            Tips.$('#iserror').innerText = '';
+            if(!Tips.$('#isread').checked ){
+                Tips.$('#iserror').innerText = '你还没有同意购买协议';
+                return false; // 返回false 阻止弹出框关闭 也不会执行after
+            }
+        },
+		after: function(b){
+			if(b){
+				Tips.loadShow('正在处理中'); // 开启加载框
+				// 在此可以发送ajax请求 
+				// 模拟ajax
+				setTimeout(function(){
+					Tips.loadHide(); // ajax请求成功后 关闭加载框
+					// ajax请求成功后 弹出其他消息
+					Tips.alert('<h3>恭喜您，购买成功</h3>',function(){
+						Tips.alert({
+							define: '知道了，我会跳转的',
+							content: '跳转到交易记录页面'
+						});
+						// location.href = 'http://m.jd.com/';
+					});
+				},1000);
+			}
+		}
+	});
+};
+
+Tips.$('#alertBtn_07').onclick = function(e){
+	// 调用方式1
+	Tips.confirm({
+		content: '<h3>输入口令领取红包</h3><div style="width:100%;"><input type="text" id="str_code" placeholder="请输入口令" style="width: 100%; height:40px;" /><p id="str_error"><p></div>',
+		before: function(){
+			if( !/^\d{6}$/.test(Tips.$('#str_code').value) ){
+				Tips.$('#str_error').innerHTML = '口令为6位数字';
+				Tips.$('#str_code').focus();
+				return false;
+			}
+			// 发送ajax
+            Tips.loadShow('正在处理中'); //1 显示加载框
+            // $.ajax({ }); //2 发送ajax请求 
+
+            // Tips.loadHide();  // 3 ajax返回结果 隐藏加载框 
+            // Tips.alert('恭喜你，获得<strong>100</strong>元红包！'); //3-1 提示领取成功 
+            // Tips.$('#str_error').innerHTML = '口令有误，请重新输入'; // 3-2 提示领取失败
+            
+            //  模拟领取成功
+            setTimeout(function(){
+                Tips.loadHide();
+                Tips.alert('恭喜你，获得<strong>100</strong>元红包！');
+            },1500);
+            
+            //  模拟领取失败
+            // setTimeout(function(){
+            //     Tips.loadHide();
+            //     Tips.$('#str_error').innerHTML = '口令有误，请重新输入';
+            // },1500);
+            return false; // 始终返回fasle 不让弹出框关闭 
+		}
+	});
+	// 调用方式2 不支持关闭前 before 执行 
+};
+
+// ------------------------------------------------
+
+Tips.$('#alertBtn_08').onclick = function(e){
+	// Tips.open({
+	// 	content: '对不起，请刷新一下页面'
+	// });
+	Tips.open('对不起，请刷新一下页面<br><input type="tel" placeholder="请输入手机号码" style="width: 100%; height:40px; margin-bottom:10px;" /><input type="text" placeholder="请输入用户名" style="width: 100%; height:40px;margin-bottom:10px;" /><input type="password" placeholder="请输入密码" style="width: 100%; height:40px;margin-bottom:10px;" />');
+};
+
+Tips.$('#alertBtn_09').onclick = function(e){
+	Tips.open({
+		content: '我在3秒后会关闭哦',
+		time: 3
+	});
+	// Tips.open('我在3秒后会关闭哦',3);
+};
+	 
+
+</script>
+
+
+
+</body>
+</html>
